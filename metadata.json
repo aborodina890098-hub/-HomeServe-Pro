@@ -1,0 +1,7 @@
+{
+  "name": "HomeServe Pro - Egypt's #1 Home Services",
+  "description": "The leading platform for booking reliable home services in Egypt. From plumbing to electrical work, get professional help in 30 minutes with guaranteed quality and transparent pricing.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

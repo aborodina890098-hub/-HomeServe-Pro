@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeServe Pro | خدمات صيانة منزلية فورية في مصر</title>
+    <meta name="description" content="احجز أفضل الفنيين في مصر: سباكة، كهرباء، تكييف، تنظيف. جودة مضمونة وسعر ثابت.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#1e40af',
+              secondary: '#f97316',
+              accent: '#10b981',
+            },
+            fontFamily: {
+              cairo: ['Cairo', 'sans-serif'],
+              inter: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'float': 'float 4s ease-in-out infinite',
+              'float-delayed': 'float 5s ease-in-out infinite 1s',
+              'slide-up': 'slideUp 0.6s ease-out forwards',
+              'spin-slow': 'spin 12s linear infinite',
+              'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+              'swing': 'swing 2s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                '50%': { transform: 'translateY(-30px) rotate(5deg)' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(50px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              pulseSoft: {
+                '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                '50%': { opacity: '0.9', transform: 'scale(1.02)' },
+              },
+              swing: {
+                '0%, 100%': { transform: 'rotate(-10deg)' },
+                '50%': { transform: 'rotate(10deg)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { transition: background-color 0.3s ease; scroll-behavior: smooth; }
+      .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+      .dark .glass { background: rgba(15, 23, 42, 0.8); }
+      
+      .perspective-3d { perspective: 2000px; transform-style: preserve-3d; }
+      .card-3d { 
+        transition: all 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        transform-style: preserve-3d;
+      }
+      .card-3d:hover {
+        transform: rotateX(8deg) rotateY(8deg) translateZ(30px);
+      }
+      .inner-3d { transform: translateZ(60px); }
+      
+      /* منع القص عند استخدام 3D */
+      .no-clip { overflow: visible !important; }
+      
+      .glow-primary { box-shadow: 0 0 40px rgba(30, 64, 175, 0.2); }
+      .glow-secondary { box-shadow: 0 0 40px rgba(249, 115, 22, 0.2); }
+      
+      /* شكل هندسي 3D للخلفية */
+      .bg-3d-shape {
+        position: absolute;
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        background: linear-gradient(45deg, var(--tw-gradient-from), var(--tw-gradient-to));
+        filter: blur(80px);
+        opacity: 0.15;
+        z-index: -1;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.564.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-cairo overflow-x-hidden">
+    <div id="root"></div>
+  </body>
+</html>
