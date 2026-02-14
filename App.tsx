@@ -36,28 +36,44 @@ export const useApp = () => {
 };
 
 const App: React.FC = () => {
-  const [lang, setLang] = useState<Language>(() => (localStorage.getItem('lang') as Language) || 'ar');
-  const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('theme') as Theme) || 'light');
+  // Initialize with defaults to avoid hydration mismatch
+  const [lang, setLang] = useState<Language>('ar');
+  const [theme, setTheme] = useState<Theme>('light');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    // Load preferences from localStorage after mount
+    const savedLang = localStorage.getItem('lang') as Language;
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    
+    if (savedLang) setLang(savedLang);
+    if (savedTheme) setTheme(savedTheme);
+    
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
     localStorage.setItem('lang', lang);
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  }, [lang]);
+  }, [lang, isLoaded]);
 
   useEffect(() => {
+    if (!isLoaded) return;
     localStorage.setItem('theme', theme);
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [theme]);
+  }, [theme, isLoaded]);
 
   const t = (key: string) => {
     return translations[key]?.[lang] || key;
   };
 
+  // Prevent flicker or hydration issues by rendering a consistent initial UI
   return (
     <AppContext.Provider value={{ lang, setLang, theme, setTheme, t }}>
       <div className={`min-h-screen font-${lang === 'ar' ? 'cairo' : 'inter'} bg-slate-50 dark:bg-slate-950 transition-colors duration-300`}>
