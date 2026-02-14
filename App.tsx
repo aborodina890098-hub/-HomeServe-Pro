@@ -36,32 +36,39 @@ export const useApp = () => {
 };
 
 const App: React.FC = () => {
-  // Initialize with defaults to avoid hydration mismatch
   const [lang, setLang] = useState<Language>('ar');
   const [theme, setTheme] = useState<Theme>('light');
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load preferences from localStorage after mount
-    const savedLang = localStorage.getItem('lang') as Language;
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    
-    if (savedLang) setLang(savedLang);
-    if (savedTheme) setTheme(savedTheme);
+    // Wrap localStorage access in try-catch because of Tracking Prevention
+    try {
+      const savedLang = localStorage.getItem('lang') as Language;
+      const savedTheme = localStorage.getItem('theme') as Theme;
+      
+      if (savedLang) setLang(savedLang);
+      if (savedTheme) setTheme(savedTheme);
+    } catch (e) {
+      console.warn("Storage access denied by browser tracking prevention.");
+    }
     
     setIsLoaded(true);
   }, []);
 
   useEffect(() => {
     if (!isLoaded) return;
-    localStorage.setItem('lang', lang);
+    try {
+      localStorage.setItem('lang', lang);
+    } catch (e) {}
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   }, [lang, isLoaded]);
 
   useEffect(() => {
     if (!isLoaded) return;
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (e) {}
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -73,13 +80,16 @@ const App: React.FC = () => {
     return translations[key]?.[lang] || key;
   };
 
-  // Prevent flicker or hydration issues by rendering a consistent initial UI
+  if (!isLoaded) {
+      // Return a minimal skeleton or empty div to prevent hydration mismatch crash
+      return <div className="min-h-screen bg-slate-50 dark:bg-slate-950"></div>;
+  }
+
   return (
     <AppContext.Provider value={{ lang, setLang, theme, setTheme, t }}>
       <div className={`min-h-screen font-${lang === 'ar' ? 'cairo' : 'inter'} bg-slate-50 dark:bg-slate-950 transition-colors duration-300`}>
         <Navbar />
         <main className="relative overflow-hidden">
-          {/* Global Background 3D Elements */}
           <div className="bg-3d-shape from-blue-500 to-primary top-0 right-0 w-[500px] h-[500px] animate-pulse-soft"></div>
           <div className="bg-3d-shape from-orange-400 to-secondary bottom-0 left-0 w-[600px] h-[600px] animate-float"></div>
           
