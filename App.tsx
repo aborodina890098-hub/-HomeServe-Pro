@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Language, Theme } from './types';
 import { translations } from './i18n';
@@ -36,36 +35,37 @@ export const useApp = () => {
 };
 
 const App: React.FC = () => {
+  const [hasMounted, setHasMounted] = useState(false);
   const [lang, setLang] = useState<Language>('ar');
   const [theme, setTheme] = useState<Theme>('light');
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Wrap localStorage access in try-catch because of Tracking Prevention
-    try {
-      const savedLang = localStorage.getItem('lang') as Language;
-      const savedTheme = localStorage.getItem('theme') as Theme;
-      
-      if (savedLang) setLang(savedLang);
-      if (savedTheme) setTheme(savedTheme);
-    } catch (e) {
-      console.warn("Storage access denied by browser tracking prevention.");
-    }
+    setHasMounted(true);
     
-    setIsLoaded(true);
+    // Safely attempt to load settings
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedLang = localStorage.getItem('lang') as Language;
+        const savedTheme = localStorage.getItem('theme') as Theme;
+        if (savedLang) setLang(savedLang);
+        if (savedTheme) setTheme(savedTheme);
+      }
+    } catch (e) {
+      console.warn("LocalStorage access denied.");
+    }
   }, []);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!hasMounted) return;
     try {
       localStorage.setItem('lang', lang);
     } catch (e) {}
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  }, [lang, isLoaded]);
+  }, [lang, hasMounted]);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!hasMounted) return;
     try {
       localStorage.setItem('theme', theme);
     } catch (e) {}
@@ -74,15 +74,15 @@ const App: React.FC = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [theme, isLoaded]);
+  }, [theme, hasMounted]);
 
   const t = (key: string) => {
     return translations[key]?.[lang] || key;
   };
 
-  if (!isLoaded) {
-      // Return a minimal skeleton or empty div to prevent hydration mismatch crash
-      return <div className="min-h-screen bg-slate-50 dark:bg-slate-950"></div>;
+  // The critical fix: Only render once we are sure we are in the browser
+  if (!hasMounted) {
+    return <div className="min-h-screen bg-slate-50 dark:bg-slate-950"></div>;
   }
 
   return (
@@ -90,9 +90,7 @@ const App: React.FC = () => {
       <div className={`min-h-screen font-${lang === 'ar' ? 'cairo' : 'inter'} bg-slate-50 dark:bg-slate-950 transition-colors duration-300`}>
         <Navbar />
         <main className="relative overflow-hidden">
-          <div className="bg-3d-shape from-blue-500 to-primary top-0 right-0 w-[500px] h-[500px] animate-pulse-soft"></div>
-          <div className="bg-3d-shape from-orange-400 to-secondary bottom-0 left-0 w-[600px] h-[600px] animate-float"></div>
-          
+          <div className="bg-3d-shape from-blue-500 to-primary top-0 right-0 w-[500px] h-[500px]"></div>
           <Hero />
           <ProblemSection />
           <ValueProp />
