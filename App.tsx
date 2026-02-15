@@ -40,18 +40,19 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
+    // التأكد من أن الكود يعمل داخل المتصفح فقط
     setHasMounted(true);
     
-    // Safely attempt to load settings
     try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const savedLang = localStorage.getItem('lang') as Language;
-        const savedTheme = localStorage.getItem('theme') as Theme;
+      const storage = typeof window !== 'undefined' ? window.localStorage : null;
+      if (storage) {
+        const savedLang = storage.getItem('lang') as Language;
+        const savedTheme = storage.getItem('theme') as Theme;
         if (savedLang) setLang(savedLang);
         if (savedTheme) setTheme(savedTheme);
       }
     } catch (e) {
-      console.warn("LocalStorage access denied.");
+      console.warn("Storage access blocked by browser settings.");
     }
   }, []);
 
@@ -59,30 +60,34 @@ const App: React.FC = () => {
     if (!hasMounted) return;
     try {
       localStorage.setItem('lang', lang);
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     } catch (e) {}
-    document.documentElement.lang = lang;
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   }, [lang, hasMounted]);
 
   useEffect(() => {
     if (!hasMounted) return;
     try {
       localStorage.setItem('theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     } catch (e) {}
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
   }, [theme, hasMounted]);
 
   const t = (key: string) => {
     return translations[key]?.[lang] || key;
   };
 
-  // The critical fix: Only render once we are sure we are in the browser
+  // حماية الشاشة البيضاء: إذا لم يتم "تثبيت" المكون بعد، لا ترسم شيئاً معقداً
   if (!hasMounted) {
-    return <div className="min-h-screen bg-slate-50 dark:bg-slate-950"></div>;
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   return (
@@ -90,7 +95,6 @@ const App: React.FC = () => {
       <div className={`min-h-screen font-${lang === 'ar' ? 'cairo' : 'inter'} bg-slate-50 dark:bg-slate-950 transition-colors duration-300`}>
         <Navbar />
         <main className="relative overflow-hidden">
-          <div className="bg-3d-shape from-blue-500 to-primary top-0 right-0 w-[500px] h-[500px]"></div>
           <Hero />
           <ProblemSection />
           <ValueProp />

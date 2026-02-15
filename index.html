@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- منع خطأ 404 للأيقونة عبر إضافة أيقونة برمجية -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
     <title>HomeServe Pro | خدمات صيانة منزلية فورية في مصر</title>
     <meta name="description" content="احجز أفضل الفنيين في مصر: سباكة، كهرباء، تكييف، تنظيف. جودة مضمونة وسعر ثابت.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,22 +30,16 @@
       }
     </script>
     <style>
-      body { transition: background-color 0.3s ease; scroll-behavior: smooth; }
+      /* خلفية أولية لمنع الشاشة البيضاء تماماً أثناء التحميل */
+      body { 
+        background-color: #f8fafc; 
+        transition: background-color 0.3s ease; 
+        scroll-behavior: smooth;
+        margin: 0;
+      }
+      .dark body { background-color: #020617; }
       .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
       .dark .glass { background: rgba(15, 23, 42, 0.8); }
-      .perspective-3d { perspective: 2000px; transform-style: preserve-3d; }
-      .card-3d { transition: all 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67); transform-style: preserve-3d; }
-      .card-3d:hover { transform: rotateX(8deg) rotateY(8deg) translateZ(30px); }
-      .inner-3d { transform: translateZ(60px); }
-      .no-clip { overflow: visible !important; }
-      .bg-3d-shape {
-        position: absolute;
-        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-        background: linear-gradient(45deg, var(--tw-gradient-from), var(--tw-gradient-to));
-        filter: blur(80px);
-        opacity: 0.15;
-        z-index: -1;
-      }
     </style>
     <script type="importmap">
 {
@@ -60,5 +56,6 @@
   </head>
   <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-cairo overflow-x-hidden">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
